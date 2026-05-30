@@ -23,7 +23,7 @@
         
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">Kalkulator Pensiun Netto</h1>
-            <p class="text-slate-500 mt-2">Menghitung proyeksi aset bersih setelah dipotong Pajak, Fee Beli, & Fee Jual.</p>
+            <p class="text-slate-500 mt-2">Menghitung proyeksi aset bersih. Potongan Pajak & Fee Beli dibebankan setiap kali setor.</p>
         </div>
 
         <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 flex flex-col md:flex-row">
@@ -103,7 +103,7 @@
                 <div id="step-3" class="step-hidden space-y-6">
                     <div>
                         <h3 class="text-2xl font-bold">Alokasi & Instrumen (Pajak/Fee)</h3>
-                        <p class="text-slate-500 text-sm mt-1">Sistem akan memecah portofolio dan memotong pajak/fee otomatis.</p>
+                        <p class="text-slate-500 text-sm mt-1">Sistem akan memotong Pajak dan Fee Beli setiap bulan saat penyetoran.</p>
                     </div>
                     <div class="space-y-4">
                         <div class="grid grid-cols-2 gap-4">
@@ -171,16 +171,16 @@
                         <h4 class="text-sm font-bold text-slate-700 mb-3">Total Potongan (Losses)</h4>
                         <div class="space-y-2">
                             <div class="flex justify-between text-sm">
-                                <span class="text-slate-500">Biaya Admin (Fee Beli)</span>
+                                <span class="text-slate-500">Fee Beli (Dipotong Bulanan)</span>
                                 <span class="font-semibold text-slate-700" id="valFeeBeli">Rp 0</span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span class="text-slate-500">Biaya Pencairan (Fee Jual)</span>
-                                <span class="font-semibold text-slate-700" id="valFeeJual">Rp 0</span>
+                                <span class="text-slate-500">Pajak Negara (Dipotong Bulanan)</span>
+                                <span class="font-semibold text-slate-700" id="valPajak">Rp 0</span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span class="text-slate-500">Pajak Negara</span>
-                                <span class="font-semibold text-slate-700" id="valPajak">Rp 0</span>
+                                <span class="text-slate-500">Fee Jual (Dipotong Saat Cair)</span>
+                                <span class="font-semibold text-slate-700" id="valFeeJual">Rp 0</span>
                             </div>
                             <div class="pt-2 mt-2 border-t border-slate-100 flex justify-between font-bold text-red-600">
                                 <span>Total Terpotong</span>
@@ -216,22 +216,22 @@
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
 
         // Database Profil & Instrumen Investasi Beserta Biayanya
-        // taxOnProfit: true (pajak dihitung dari keuntungan), false (pajak dihitung dari nilai transaksi/saldo akhir)
+        // Sesuai aturan: Pajak & Fee Beli dipotong SETIAP KALI BELI (bulanan). Fee Jual saat akhir.
         const dbInstrumen = {
             "konservatif": [
-                { nama: "Deposito Bank", alokasi: 0.40, return: 0.03, feeBeli: 0, feeJual: 0, pajak: 0.20, taxOnProfit: true },
-                { nama: "Reksadana Pasar Uang", alokasi: 0.30, return: 0.04, feeBeli: 0, feeJual: 0, pajak: 0, taxOnProfit: true },
-                { nama: "SBN (ORI/SR)", alokasi: 0.30, return: 0.058, feeBeli: 0, feeJual: 0, pajak: 0.10, taxOnProfit: true }
+                { nama: "Deposito Bank", alokasi: 0.40, return: 0.03, feeBeli: 0, feeJual: 0, pajak: 0.20 },
+                { nama: "Reksadana Pasar Uang", alokasi: 0.30, return: 0.04, feeBeli: 0, feeJual: 0, pajak: 0 },
+                { nama: "SBN (ORI/SR)", alokasi: 0.30, return: 0.058, feeBeli: 0, feeJual: 0, pajak: 0.10 }
             ],
             "moderat": [
-                { nama: "Obligasi Korporasi", alokasi: 0.30, return: 0.07, feeBeli: 0.0025, feeJual: 0.0025, pajak: 0.10, taxOnProfit: true },
-                { nama: "RD Pendapatan Tetap", alokasi: 0.40, return: 0.08, feeBeli: 0, feeJual: 0.005, pajak: 0, taxOnProfit: true },
-                { nama: "Reksadana Campuran", alokasi: 0.30, return: 0.10, feeBeli: 0, feeJual: 0.01, pajak: 0, taxOnProfit: true }
+                { nama: "Obligasi Korporasi", alokasi: 0.30, return: 0.07, feeBeli: 0.0025, feeJual: 0.0025, pajak: 0.10 },
+                { nama: "RD Pendapatan Tetap", alokasi: 0.40, return: 0.08, feeBeli: 0, feeJual: 0.005, pajak: 0 },
+                { nama: "Reksadana Campuran", alokasi: 0.30, return: 0.10, feeBeli: 0, feeJual: 0.01, pajak: 0 }
             ],
             "agresif": [
-                { nama: "Saham", alokasi: 0.60, return: 0.12, feeBeli: 0.0015, feeJual: 0.0025, pajak: 0.001, taxOnProfit: false },
-                { nama: "Kripto", alokasi: 0.20, return: 0.20, feeBeli: 0.002, feeJual: 0.002, pajak: 0.002, taxOnProfit: false }, // fee jual kripto disesuaikan 0.2%
-                { nama: "Reksadana Saham", alokasi: 0.20, return: 0.15, feeBeli: 0, feeJual: 0.01, pajak: 0, taxOnProfit: true }
+                { nama: "Saham", alokasi: 0.60, return: 0.12, feeBeli: 0.0015, feeJual: 0.0025, pajak: 0.001 },
+                { nama: "Kripto", alokasi: 0.20, return: 0.20, feeBeli: 0.002, feeJual: 0.002, pajak: 0.002 }, 
+                { nama: "Reksadana Saham", alokasi: 0.20, return: 0.15, feeBeli: 0, feeJual: 0.01, pajak: 0 }
             ]
         };
 
@@ -302,12 +302,12 @@
 
             // Variabel Penampung Grafik & Biaya
             let arrLabel = [];
-            let arrDataBruto = []; // Sebelum dicairkan/dipotong pajak akhir
+            let arrDataBruto = []; 
             let arrTarget = [];
 
             let totalFeeBeli = 0;
-            let totalFeeJual = 0;
             let totalPajak = 0;
+            let totalFeeJual = 0;
             let saldoNettoAkhir = 0;
 
             // Inisialisasi Grafik
@@ -325,50 +325,46 @@
             }
             saldoNettoAkhir += saldoKasTahunan;
 
-            // B. PERHITUNGAN KERANJANG INVESTASI (Dipotong Fee & Pajak)
-            // Lakukan iterasi per instrumen agar potongannya akurat
+            // B. PERHITUNGAN KERANJANG INVESTASI
+            // Lakukan iterasi per instrumen
             instrumenList.forEach(inst => {
                 let invAwalInst = invAwalTotal * inst.alokasi;
                 let invBlnInst = invBulananTotal * inst.alokasi;
 
-                // Fee Beli Modal Awal
+                // 1. Potongan di Modal Awal
                 let feeBeliAwal = invAwalInst * inst.feeBeli;
-                let saldoAktif = invAwalInst - feeBeliAwal;
-                let totalModalBersih = saldoAktif;
+                let pajakAwal = invAwalInst * inst.pajak;
+                
                 totalFeeBeli += feeBeliAwal;
+                totalPajak += pajakAwal;
 
+                let saldoAktif = invAwalInst - feeBeliAwal - pajakAwal;
                 arrDataBruto[0] += saldoAktif;
 
-                // Loop Tahun
+                // 2. Loop Tahun (Setoran Rutin Bulanan diringkas dalam perhitungan tahunan)
                 for (let y = 1; y <= masaPersiapan; y++) {
-                    let setoranTahunan = invBlnInst * 12;
-                    let feeBeliTahunIni = setoranTahunan * inst.feeBeli;
-                    let setoranBersihTahunIni = setoranTahunan - feeBeliTahunIni;
+                    let setoranTahunanKotor = invBlnInst * 12;
+                    
+                    // Fee Beli & Pajak Dikenakan Pada Setiap Setoran (Tahunan/Bulanan)
+                    let feeBeliTahunIni = setoranTahunanKotor * inst.feeBeli;
+                    let pajakTahunIni = setoranTahunanKotor * inst.pajak;
                     
                     totalFeeBeli += feeBeliTahunIni;
-                    totalModalBersih += setoranBersihTahunIni;
+                    totalPajak += pajakTahunIni;
 
-                    // Rumus Future Value Bunga Majemuk
+                    let setoranBersihTahunIni = setoranTahunanKotor - feeBeliTahunIni - pajakTahunIni;
+
+                    // Rumus Future Value Bunga Majemuk dari saldo yang sudah dipotong fee di awal
                     let pertumbuhanBunga = (saldoAktif * inst.return) + (setoranBersihTahunIni * ((Math.pow(1 + inst.return, 1) - 1) / inst.return));
                     saldoAktif += pertumbuhanBunga + setoranBersihTahunIni;
 
                     arrDataBruto[y] += saldoAktif;
                 }
 
-                // Saat Pencairan Akhir (Pajak & Fee Jual)
-                let profitInst = saldoAktif - totalModalBersih;
-                let pajakNominal = 0;
-                
-                if(inst.taxOnProfit) {
-                    pajakNominal = profitInst * inst.pajak; // Deposito, SBN, Obligasi
-                } else {
-                    pajakNominal = saldoAktif * inst.pajak; // Saham, Kripto
-                }
-
+                // 3. Saat Pencairan di Masa Pensiun (Tinggal dipotong Fee Jual, karena Pajak sudah dibayar di depan)
                 let feeJualNominal = saldoAktif * inst.feeJual;
-                let pencairanBersih = saldoAktif - pajakNominal - feeJualNominal;
+                let pencairanBersih = saldoAktif - feeJualNominal;
 
-                totalPajak += pajakNominal;
                 totalFeeJual += feeJualNominal;
                 saldoNettoAkhir += pencairanBersih;
             });
@@ -384,8 +380,8 @@
             document.getElementById('resKebutuhan').innerText = formatRp(danaPensiunDibutuhkan);
             
             document.getElementById('valFeeBeli').innerText = formatRp(totalFeeBeli);
-            document.getElementById('valFeeJual').innerText = formatRp(totalFeeJual);
             document.getElementById('valPajak').innerText = formatRp(totalPajak);
+            document.getElementById('valFeeJual').innerText = formatRp(totalFeeJual);
             document.getElementById('valTotalPotong').innerText = formatRp(totalPotongSemua);
 
             const box = document.getElementById('alertBox');
@@ -397,12 +393,12 @@
                 box.className = "p-5 rounded-2xl border flex gap-4 items-start bg-red-50 border-red-200 text-red-800";
                 icon.innerText = "⚠️";
                 title.innerText = "Kekurangan Dana Netto: " + formatRp(selisih);
-                desc.innerHTML = `Potongan transaksi dan pajak menggerus sebagian margin Anda. Anda harus menambah modal setoran atau mengurangi target pengeluaran.`;
+                desc.innerHTML = `Potongan transaksi di setiap pembelian bulanan Anda menggerus sebagian margin. Anda perlu menambah modal setoran bulanan.`;
             } else {
                 box.className = "p-5 rounded-2xl border flex gap-4 items-start bg-emerald-50 border-emerald-200 text-emerald-800";
                 icon.innerText = "🎉";
                 title.innerText = "Aman! Surplus Netto: " + formatRp(Math.abs(selisih));
-                desc.innerHTML = "Sekalipun sudah dipotong pajak dan fee pencairan, dana yang masuk ke kantong Anda tetap melampaui target.";
+                desc.innerHTML = "Sekalipun dana Anda rutin dipotong pajak bulanan dan fee pencairan di akhir, dana masuk rekening tetap melampaui target.";
             }
 
             renderChart(arrLabel, arrDataBruto, arrTarget);
@@ -419,7 +415,7 @@
                     labels: labels.map(l => 'Usia ' + l),
                     datasets: [
                         {
-                            label: 'Proyeksi Aset Berjalan (Kotor)',
+                            label: 'Proyeksi Aset Berjalan',
                             data: dataBruto,
                             borderColor: '#2563eb', 
                             backgroundColor: 'rgba(37, 99, 235, 0.1)',
@@ -428,7 +424,7 @@
                             tension: 0.4
                         },
                         {
-                            label: 'Garis Target',
+                            label: 'Garis Target Pensiun',
                             data: target,
                             borderColor: '#94a3b8', 
                             borderWidth: 2,
