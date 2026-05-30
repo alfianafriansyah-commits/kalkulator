@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Dana Pensiun (Smart Wizard)</title>
+    <title>Kalkulator Dana Pensiun (Netto & Realistis)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -19,17 +19,18 @@
 </head>
 <body class="text-slate-800 min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-5xl w-full">
+    <div class="max-w-6xl w-full">
         
         <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">Perencanaan Dana Pensiun</h1>
-            <p class="text-slate-500 mt-2">Ketahui posisi finansial Anda dan capai masa pensiun yang tenang.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">Kalkulator Pensiun Netto</h1>
+            <p class="text-slate-500 mt-2">Menghitung proyeksi aset bersih setelah dipotong Pajak, Fee Beli, & Fee Jual.</p>
         </div>
 
         <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 flex flex-col md:flex-row">
             
-            <div class="bg-blue-600 text-white p-8 md:w-1/3 flex flex-col justify-between">
-                <div>
+            <div class="bg-blue-600 text-white p-8 md:w-1/3 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white opacity-10 rounded-full"></div>
+                <div class="relative z-10">
                     <h2 class="text-xl font-bold mb-6">Tahapan Evaluasi</h2>
                     <ul class="space-y-6 relative">
                         <div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-blue-400 opacity-50"></div>
@@ -44,12 +45,9 @@
                         </li>
                         <li id="nav-step-3" class="flex items-center gap-4 relative z-10 opacity-50 transition-opacity">
                             <div class="w-6 h-6 rounded-full bg-blue-400 text-white font-bold flex items-center justify-center text-sm ring-4 ring-blue-600">3</div>
-                            <span class="font-semibold">Alokasi & Risiko</span>
+                            <span class="font-semibold">Alokasi & Instrumen</span>
                         </li>
                     </ul>
-                </div>
-                <div class="hidden md:block">
-                    <p class="text-sm text-blue-200">Algoritma perhitungan menggunakan metode Bunga Majemuk (Compound Interest) dan Penyesuaian Inflasi (Future Value).</p>
                 </div>
             </div>
 
@@ -58,16 +56,18 @@
                 <div id="step-1" class="step-active space-y-6">
                     <div>
                         <h3 class="text-2xl font-bold">Target Waktu Pensiun</h3>
-                        <p class="text-slate-500 text-sm mt-1">Berapa lama waktu yang Anda miliki untuk bersiap?</p>
+                        <p class="text-slate-500 text-sm mt-1">Tentukan durasi persiapan finansial Anda.</p>
                     </div>
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Usia Anda Saat Ini (Tahun)</label>
-                            <input type="number" id="usiaSekarang" placeholder="Contoh: 25" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Target Usia Pensiun (Tahun)</label>
-                            <input type="number" id="usiaPensiun" placeholder="Contoh: 40" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Usia Saat Ini</label>
+                                <input type="number" id="usiaSekarang" placeholder="25" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Target Usia Pensiun</label>
+                                <input type="number" id="usiaPensiun" placeholder="40" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            </div>
                         </div>
                     </div>
                     <div class="pt-4 flex justify-end">
@@ -78,20 +78,20 @@
                 <div id="step-2" class="step-hidden space-y-6">
                     <div>
                         <h3 class="text-2xl font-bold">Kondisi Keuangan</h3>
-                        <p class="text-slate-500 text-sm mt-1">Berapa kapasitas menabung Anda setiap bulannya?</p>
+                        <p class="text-slate-500 text-sm mt-1">Masukkan arus kas dan aset awal Anda saat ini.</p>
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Gaji / Pemasukan Bulanan (Rp)</label>
-                            <input type="number" id="gaji" placeholder="Contoh: 8000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Gaji Bulanan (Rp)</label>
+                            <input type="number" id="gaji" placeholder="1800000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Pengeluaran Rutin Bulanan (Rp)</label>
-                            <input type="number" id="pengeluaran" placeholder="Contoh: 5000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Pengeluaran Bulanan (Rp)</label>
+                            <input type="number" id="pengeluaran" placeholder="1000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Total Tabungan / Modal Saat Ini (Rp)</label>
-                            <input type="number" id="tabunganAwal" placeholder="Contoh: 10000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Tabungan Awal Saat Ini (Rp)</label>
+                            <input type="number" id="tabunganAwal" placeholder="2000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
                         </div>
                     </div>
                     <div class="pt-4 flex justify-between">
@@ -102,8 +102,8 @@
 
                 <div id="step-3" class="step-hidden space-y-6">
                     <div>
-                        <h3 class="text-2xl font-bold">Strategi Alokasi & Risiko</h3>
-                        <p class="text-slate-500 text-sm mt-1">Tentukan bagaimana sisa uang Anda diputar dalam investasi.</p>
+                        <h3 class="text-2xl font-bold">Alokasi & Instrumen (Pajak/Fee)</h3>
+                        <p class="text-slate-500 text-sm mt-1">Sistem akan memecah portofolio dan memotong pajak/fee otomatis.</p>
                     </div>
                     <div class="space-y-4">
                         <div class="grid grid-cols-2 gap-4">
@@ -112,16 +112,16 @@
                                 <input type="number" step="0.1" id="inflasi" value="2.5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Profil Risiko Investasi</label>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Profil Risiko (Portofolio)</label>
                                 <select id="profilRisiko" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
-                                    <option value="0.05">Konservatif (~5%/thn)</option>
-                                    <option value="0.083" selected>Moderat (~8.3%/thn)</option>
-                                    <option value="0.12">Agresif (~12%/thn)</option>
+                                    <option value="konservatif">Konservatif (Deposito, RDPU, SBN)</option>
+                                    <option value="moderat" selected>Moderat (Obligasi, RDPT, RDC)</option>
+                                    <option value="agresif">Agresif (Saham, Kripto, RDS)</option>
                                 </select>
                             </div>
                         </div>
                         <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                            <label class="block text-sm font-semibold text-blue-800 mb-2">Persentase Uang yang Masuk ke Investasi</label>
+                            <label class="block text-sm font-semibold text-blue-800 mb-2">Persentase Masuk ke Investasi</label>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <span class="text-xs text-blue-600 block mb-1">Dari Tabungan Awal (%)</span>
@@ -132,12 +132,12 @@
                                     <input type="number" id="alokInvBln" value="80" class="w-full px-3 py-2 bg-white border border-blue-200 rounded-lg outline-none text-sm">
                                 </div>
                             </div>
-                            <p class="text-[10px] text-blue-500 mt-2">*Sisa dari persentase di atas akan otomatis masuk ke keranjang tabungan tunai (bunga 0%).</p>
+                            <p class="text-[10px] text-blue-500 mt-2">*Sisa persentase otomatis masuk ke tabungan kas biasa (bunga 0%).</p>
                         </div>
                     </div>
                     <div class="pt-4 flex justify-between">
                         <button onclick="prevStep(2)" class="text-slate-500 hover:text-slate-800 px-4 py-3 font-semibold transition">&larr; Kembali</button>
-                        <button onclick="generateDashboard()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition shadow-md shadow-emerald-200">Lihat Hasil Proyeksi!</button>
+                        <button onclick="generateDashboard()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition shadow-md shadow-emerald-200">Kalkulasi Netto!</button>
                     </div>
                 </div>
 
@@ -146,39 +146,45 @@
 
         <div id="dashboard" class="mt-8 hidden animate-[fadeIn_0.6s_ease-in-out]">
             <div class="text-center mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                <h2 class="text-3xl font-bold text-slate-800">Dashboard Proyeksi Anda</h2>
-                <button onclick="editData()" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-lg font-semibold hover:bg-slate-50 text-sm shadow-sm">Edit Data</button>
+                <h2 class="text-3xl font-bold text-slate-800">Dashboard Proyeksi Netto Anda</h2>
+                <button onclick="editData()" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-lg font-semibold hover:bg-slate-50 text-sm shadow-sm">Ubah Data</button>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wide mb-4">Target Finansial</h4>
-                        <div>
-                            <p class="text-xs text-slate-500">Biaya Hidup Bulanan (Disesuaikan Inflasi)</p>
-                            <h3 class="text-xl font-bold text-slate-800" id="resBiayaHidup">Rp 0</h3>
-                        </div>
-                        <div class="mt-4 pt-4 border-t border-slate-100">
-                            <p class="text-xs text-slate-500">Total Dana Pensiun Dibutuhkan</p>
-                            <h3 class="text-2xl font-bold text-slate-800" id="resKebutuhan">Rp 0</h3>
-                        </div>
-                    </div>
-                    
                     <div class="bg-blue-600 p-6 rounded-2xl shadow-lg text-white relative overflow-hidden">
                         <div class="absolute -right-10 -top-10 w-32 h-32 bg-white opacity-10 rounded-full"></div>
-                        <h4 class="text-sm font-bold text-blue-200 uppercase tracking-wide mb-4 relative z-10">Proyeksi Aset</h4>
+                        <h4 class="text-sm font-bold text-blue-200 uppercase tracking-wide mb-4 relative z-10">Total Aset Bersih (Netto)</h4>
                         <div class="relative z-10">
-                            <p class="text-xs text-blue-100">Estimasi Uang Terkumpul</p>
+                            <p class="text-[10px] text-blue-100 mb-1">Dana yang bisa dicairkan ke rekening</p>
                             <h3 class="text-3xl font-bold text-white" id="resTerkumpul">Rp 0</h3>
                         </div>
                         <div class="mt-4 pt-4 border-t border-blue-500 flex justify-between items-center relative z-10">
                             <div>
-                                <p class="text-xs text-blue-200">Setoran Rutin</p>
-                                <p class="text-sm font-semibold" id="resSetoranBln">Rp 0 / bln</p>
+                                <p class="text-xs text-blue-200">Target Kebutuhan</p>
+                                <p class="text-sm font-semibold text-emerald-300" id="resKebutuhan">Rp 0</p>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xs text-blue-200">Sisa Waktu</p>
-                                <p class="text-sm font-semibold" id="resMasa">0 Tahun</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-red-500">
+                        <h4 class="text-sm font-bold text-slate-700 mb-3">Total Potongan (Losses)</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Biaya Admin (Fee Beli)</span>
+                                <span class="font-semibold text-slate-700" id="valFeeBeli">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Biaya Pencairan (Fee Jual)</span>
+                                <span class="font-semibold text-slate-700" id="valFeeJual">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Pajak Negara</span>
+                                <span class="font-semibold text-slate-700" id="valPajak">Rp 0</span>
+                            </div>
+                            <div class="pt-2 mt-2 border-t border-slate-100 flex justify-between font-bold text-red-600">
+                                <span>Total Terpotong</span>
+                                <span id="valTotalPotong">Rp 0</span>
                             </div>
                         </div>
                     </div>
@@ -188,13 +194,13 @@
                     <div id="alertBox" class="p-5 rounded-2xl border flex gap-4 items-start">
                         <div class="text-3xl" id="alertIcon">⚠️</div>
                         <div>
-                            <h4 class="font-bold text-lg" id="alertTitle">Terdapat Kekurangan Dana</h4>
-                            <p class="text-sm mt-1" id="alertDesc">Anda masih kekurangan dana untuk mencapai target pensiun.</p>
+                            <h4 class="font-bold text-lg" id="alertTitle">Status Keuangan</h4>
+                            <p class="text-sm mt-1" id="alertDesc">-</p>
                         </div>
                     </div>
 
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <h3 class="font-bold text-slate-700 mb-4">Grafik Pertumbuhan Aset</h3>
+                        <h3 class="font-bold text-slate-700 mb-4">Grafik Pertumbuhan Aset (Gross vs Netto Target)</h3>
                         <div class="h-64">
                             <canvas id="growthChart"></canvas>
                         </div>
@@ -207,10 +213,29 @@
 
     <script>
         let myChart = null;
-
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
 
-        // Navigasi UI
+        // Database Profil & Instrumen Investasi Beserta Biayanya
+        // taxOnProfit: true (pajak dihitung dari keuntungan), false (pajak dihitung dari nilai transaksi/saldo akhir)
+        const dbInstrumen = {
+            "konservatif": [
+                { nama: "Deposito Bank", alokasi: 0.40, return: 0.03, feeBeli: 0, feeJual: 0, pajak: 0.20, taxOnProfit: true },
+                { nama: "Reksadana Pasar Uang", alokasi: 0.30, return: 0.04, feeBeli: 0, feeJual: 0, pajak: 0, taxOnProfit: true },
+                { nama: "SBN (ORI/SR)", alokasi: 0.30, return: 0.058, feeBeli: 0, feeJual: 0, pajak: 0.10, taxOnProfit: true }
+            ],
+            "moderat": [
+                { nama: "Obligasi Korporasi", alokasi: 0.30, return: 0.07, feeBeli: 0.0025, feeJual: 0.0025, pajak: 0.10, taxOnProfit: true },
+                { nama: "RD Pendapatan Tetap", alokasi: 0.40, return: 0.08, feeBeli: 0, feeJual: 0.005, pajak: 0, taxOnProfit: true },
+                { nama: "Reksadana Campuran", alokasi: 0.30, return: 0.10, feeBeli: 0, feeJual: 0.01, pajak: 0, taxOnProfit: true }
+            ],
+            "agresif": [
+                { nama: "Saham", alokasi: 0.60, return: 0.12, feeBeli: 0.0015, feeJual: 0.0025, pajak: 0.001, taxOnProfit: false },
+                { nama: "Kripto", alokasi: 0.20, return: 0.20, feeBeli: 0.002, feeJual: 0.002, pajak: 0.002, taxOnProfit: false }, // fee jual kripto disesuaikan 0.2%
+                { nama: "Reksadana Saham", alokasi: 0.20, return: 0.15, feeBeli: 0, feeJual: 0.01, pajak: 0, taxOnProfit: true }
+            ]
+        };
+
+        // UI Navigasi
         function updateNav(step) {
             for(let i=1; i<=3; i++) {
                 const nav = document.getElementById('nav-step-'+i);
@@ -227,23 +252,20 @@
                 }
             }
         }
-
         function nextStep(step) {
             document.getElementById('step-' + (step-1)).classList.replace('step-active', 'step-hidden');
             document.getElementById('step-' + step).classList.replace('step-hidden', 'step-active');
             updateNav(step);
         }
-
         function prevStep(step) {
             document.getElementById('step-' + (step+1)).classList.replace('step-active', 'step-hidden');
             document.getElementById('step-' + step).classList.replace('step-hidden', 'step-active');
             updateNav(step);
         }
-
         function editData() {
             document.getElementById('dashboard').classList.add('hidden');
             document.getElementById('form-container').parentElement.classList.remove('hidden');
-            prevStep(3); // Kembali ke form terakhir
+            prevStep(3);
         }
 
         // Engine Perhitungan Utama
@@ -255,97 +277,139 @@
             const tabAwalRaw = parseFloat(document.getElementById('tabunganAwal').value) || 0;
             
             const inflasi = parseFloat(document.getElementById('inflasi').value) / 100 || 0.025;
-            const alokInvAwal = parseFloat(document.getElementById('alokInvAwal').value) / 100 || 0.5;
-            const alokInvBln = parseFloat(document.getElementById('alokInvBln').value) / 100 || 0.8;
-            const returnInv = parseFloat(document.getElementById('profilRisiko').value) || 0.083;
+            const alokInvAwal = parseFloat(document.getElementById('alokInvAwal').value) / 100 || 0;
+            const alokInvBln = parseFloat(document.getElementById('alokInvBln').value) / 100 || 0;
+            const idProfil = document.getElementById('profilRisiko').value;
 
-            // Validasi Sederhana
             if(pensiun <= usia) return alert("Target pensiun harus lebih besar dari usia saat ini!");
             if(gaji <= pengeluaran) return alert("Gaji harus lebih besar dari pengeluaran agar bisa menabung!");
 
-            // Rumus Tahap 1: Waktu & Kebutuhan
+            const instrumenList = dbInstrumen[idProfil];
             const masaPersiapan = pensiun - usia;
-            const angkaHarapanHidup = 75; 
-            const durasiPensiun = angkaHarapanHidup - pensiun;
+            const durasiPensiun = 75 - pensiun;
 
+            // Target Dana
             const biayaHidupPensiunBln = pengeluaran * Math.pow(1 + inflasi, masaPersiapan);
             const danaPensiunDibutuhkan = biayaHidupPensiunBln * 12 * durasiPensiun;
 
-            // Rumus Tahap 2: Alokasi Kemampuan
+            // Kemampuan Keuangan
             const sisaGaji = gaji - pengeluaran;
-            const invBulanan = sisaGaji * alokInvBln;
-            const tabBulanan = sisaGaji - invBulanan;
+            const invBulananTotal = sisaGaji * alokInvBln;
+            const tabBulananKas = sisaGaji - invBulananTotal;
             
-            const invAwal = tabAwalRaw * alokInvAwal;
-            const sisaTabAwal = tabAwalRaw - invAwal;
+            const invAwalTotal = tabAwalRaw * alokInvAwal;
+            const sisaTabAwalKas = tabAwalRaw - invAwalTotal;
 
-            // Rumus Tahap 3: Proyeksi (Bunga Majemuk)
+            // Variabel Penampung Grafik & Biaya
             let arrLabel = [];
-            let arrData = [];
+            let arrDataBruto = []; // Sebelum dicairkan/dipotong pajak akhir
             let arrTarget = [];
-            
-            let saldoInvTahun = invAwal;
-            let saldoTabTahun = sisaTabAwal;
 
-            for (let i = 0; i <= masaPersiapan; i++) {
+            let totalFeeBeli = 0;
+            let totalFeeJual = 0;
+            let totalPajak = 0;
+            let saldoNettoAkhir = 0;
+
+            // Inisialisasi Grafik
+            for(let i=0; i<=masaPersiapan; i++) {
                 arrLabel.push(usia + i);
-                arrData.push(saldoInvTahun + saldoTabTahun);
+                arrDataBruto[i] = 0;
                 arrTarget.push(danaPensiunDibutuhkan);
-
-                // Asumsi setoran investasi bulanan diproses setahun penuh (Rumus FV Annuity)
-                const pertumbuhanInv = (saldoInvTahun * returnInv) + (invBulanan * 12 * ((Math.pow(1 + returnInv, 1) - 1) / returnInv));
-                saldoInvTahun += pertumbuhanInv + (invBulanan * 12);
-                
-                // Tabungan cash murni tanpa bunga
-                saldoTabTahun += (tabBulanan * 12);
             }
 
-            const danaTerkumpul = arrData[arrData.length - 1];
-            const selisih = danaPensiunDibutuhkan - danaTerkumpul;
+            // A. PERHITUNGAN KERANJANG KAS TUNAI (Bunga 0%, Tanpa Biaya)
+            let saldoKasTahunan = sisaTabAwalKas;
+            for(let i=0; i<=masaPersiapan; i++) {
+                arrDataBruto[i] += saldoKasTahunan;
+                if(i < masaPersiapan) saldoKasTahunan += (tabBulananKas * 12);
+            }
+            saldoNettoAkhir += saldoKasTahunan;
 
-            // Transisi UI
+            // B. PERHITUNGAN KERANJANG INVESTASI (Dipotong Fee & Pajak)
+            // Lakukan iterasi per instrumen agar potongannya akurat
+            instrumenList.forEach(inst => {
+                let invAwalInst = invAwalTotal * inst.alokasi;
+                let invBlnInst = invBulananTotal * inst.alokasi;
+
+                // Fee Beli Modal Awal
+                let feeBeliAwal = invAwalInst * inst.feeBeli;
+                let saldoAktif = invAwalInst - feeBeliAwal;
+                let totalModalBersih = saldoAktif;
+                totalFeeBeli += feeBeliAwal;
+
+                arrDataBruto[0] += saldoAktif;
+
+                // Loop Tahun
+                for (let y = 1; y <= masaPersiapan; y++) {
+                    let setoranTahunan = invBlnInst * 12;
+                    let feeBeliTahunIni = setoranTahunan * inst.feeBeli;
+                    let setoranBersihTahunIni = setoranTahunan - feeBeliTahunIni;
+                    
+                    totalFeeBeli += feeBeliTahunIni;
+                    totalModalBersih += setoranBersihTahunIni;
+
+                    // Rumus Future Value Bunga Majemuk
+                    let pertumbuhanBunga = (saldoAktif * inst.return) + (setoranBersihTahunIni * ((Math.pow(1 + inst.return, 1) - 1) / inst.return));
+                    saldoAktif += pertumbuhanBunga + setoranBersihTahunIni;
+
+                    arrDataBruto[y] += saldoAktif;
+                }
+
+                // Saat Pencairan Akhir (Pajak & Fee Jual)
+                let profitInst = saldoAktif - totalModalBersih;
+                let pajakNominal = 0;
+                
+                if(inst.taxOnProfit) {
+                    pajakNominal = profitInst * inst.pajak; // Deposito, SBN, Obligasi
+                } else {
+                    pajakNominal = saldoAktif * inst.pajak; // Saham, Kripto
+                }
+
+                let feeJualNominal = saldoAktif * inst.feeJual;
+                let pencairanBersih = saldoAktif - pajakNominal - feeJualNominal;
+
+                totalPajak += pajakNominal;
+                totalFeeJual += feeJualNominal;
+                saldoNettoAkhir += pencairanBersih;
+            });
+
+            // Transisi UI & Render Data
             document.getElementById('form-container').parentElement.classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
 
-            // Render Angka ke UI
-            document.getElementById('resBiayaHidup').innerText = formatRp(biayaHidupPensiunBln);
-            document.getElementById('resKebutuhan').innerText = formatRp(danaPensiunDibutuhkan);
-            document.getElementById('resTerkumpul').innerText = formatRp(danaTerkumpul);
-            document.getElementById('resSetoranBln').innerText = formatRp(invBulanan + tabBulanan) + " / bln";
-            document.getElementById('resMasa').innerText = masaPersiapan + " Thn";
+            const totalPotongSemua = totalFeeBeli + totalFeeJual + totalPajak;
+            const selisih = danaPensiunDibutuhkan - saldoNettoAkhir;
 
-            // Evaluasi & Rekomendasi
+            document.getElementById('resTerkumpul').innerText = formatRp(saldoNettoAkhir);
+            document.getElementById('resKebutuhan').innerText = formatRp(danaPensiunDibutuhkan);
+            
+            document.getElementById('valFeeBeli').innerText = formatRp(totalFeeBeli);
+            document.getElementById('valFeeJual').innerText = formatRp(totalFeeJual);
+            document.getElementById('valPajak').innerText = formatRp(totalPajak);
+            document.getElementById('valTotalPotong').innerText = formatRp(totalPotongSemua);
+
             const box = document.getElementById('alertBox');
             const icon = document.getElementById('alertIcon');
             const title = document.getElementById('alertTitle');
             const desc = document.getElementById('alertDesc');
 
             if (selisih > 0) {
-                // Rumus PMT untuk mencari kebutuhan tambahan investasi per bulan
-                const tambahTahunan = selisih / ((Math.pow(1 + returnInv, masaPersiapan) - 1) / returnInv);
-                const tambahBulanan = tambahTahunan / 12;
-
                 box.className = "p-5 rounded-2xl border flex gap-4 items-start bg-red-50 border-red-200 text-red-800";
                 icon.innerText = "⚠️";
-                title.innerText = "Terdapat Kekurangan Dana: " + formatRp(selisih);
-                
-                let solusiHtml = `Untuk mencapai target pensiun, Anda perlu menambah alokasi tabungan/investasi sebesar <b>${formatRp(tambahBulanan)} / bulan</b> dari pendapatan Anda saat ini. `;
-                if(returnInv < 0.12) {
-                    solusiHtml += `<br><span class="text-xs opacity-80 mt-2 block">💡 Alternatif: Tingkatkan Profil Risiko Anda ke Agresif (misal: Saham) untuk potensi imbal hasil yang lebih tinggi.</span>`;
-                }
-                desc.innerHTML = solusiHtml;
+                title.innerText = "Kekurangan Dana Netto: " + formatRp(selisih);
+                desc.innerHTML = `Potongan transaksi dan pajak menggerus sebagian margin Anda. Anda harus menambah modal setoran atau mengurangi target pengeluaran.`;
             } else {
                 box.className = "p-5 rounded-2xl border flex gap-4 items-start bg-emerald-50 border-emerald-200 text-emerald-800";
                 icon.innerText = "🎉";
-                title.innerText = "Surplus Dana: " + formatRp(Math.abs(selisih));
-                desc.innerHTML = "Luar biasa! Jika Anda konsisten dengan skema ini, dana pensiun Anda diproyeksikan akan tercapai bahkan berlebih.";
+                title.innerText = "Aman! Surplus Netto: " + formatRp(Math.abs(selisih));
+                desc.innerHTML = "Sekalipun sudah dipotong pajak dan fee pencairan, dana yang masuk ke kantong Anda tetap melampaui target.";
             }
 
-            renderChart(arrLabel, arrData, arrTarget);
+            renderChart(arrLabel, arrDataBruto, arrTarget);
         }
 
         // Render Grafik
-        function renderChart(labels, dataTerkumpul, target) {
+        function renderChart(labels, dataBruto, target) {
             const ctx = document.getElementById('growthChart').getContext('2d');
             if (myChart) myChart.destroy();
 
@@ -355,18 +419,18 @@
                     labels: labels.map(l => 'Usia ' + l),
                     datasets: [
                         {
-                            label: 'Proyeksi Aset Terkumpul (Rp)',
-                            data: dataTerkumpul,
-                            borderColor: '#2563eb', // Blue 600
+                            label: 'Proyeksi Aset Berjalan (Kotor)',
+                            data: dataBruto,
+                            borderColor: '#2563eb', 
                             backgroundColor: 'rgba(37, 99, 235, 0.1)',
                             borderWidth: 3,
                             fill: true,
                             tension: 0.4
                         },
                         {
-                            label: 'Target Dana Dibutuhkan (Rp)',
+                            label: 'Garis Target',
                             data: target,
-                            borderColor: '#94a3b8', // Slate 400
+                            borderColor: '#94a3b8', 
                             borderWidth: 2,
                             borderDash: [6, 4],
                             fill: false,
@@ -380,7 +444,7 @@
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
                         tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': ' + formatRp(ctx.raw) } },
-                        legend: { position: 'top', align: 'end', labels: { boxWidth: 12, usePointStyle: true } }
+                        legend: { position: 'top', align: 'end' }
                     },
                     scales: {
                         y: { ticks: { callback: (val) => val >= 1e9 ? 'Rp ' + (val/1e9).toFixed(1) + ' M' : (val >= 1e6 ? 'Rp ' + (val/1e6).toFixed(0) + ' Jt' : val) } }
