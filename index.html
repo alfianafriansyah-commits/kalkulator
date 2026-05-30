@@ -3,281 +3,372 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retirement Fund Calculator</title>
+    <title>Kalkulator Dana Pensiun (Smart Wizard)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
-        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .step-hidden { display: none; }
+        .step-active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen p-4 md:p-8">
+<body class="text-slate-800 min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-7xl mx-auto space-y-6">
+    <div class="max-w-5xl w-full">
         
-        <div class="text-center space-y-2 mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Retirement Fund Calculator</h1>
-            <p class="text-slate-500">Kalkulasi dana pensiun berdasarkan Profil Risiko dan Alokasi Keuangan</p>
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">Perencanaan Dana Pensiun</h1>
+            <p class="text-slate-500 mt-2">Ketahui posisi finansial Anda dan capai masa pensiun yang tenang.</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 flex flex-col md:flex-row">
             
-            <div class="lg:col-span-4 glass-card p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">Profil & Input Data</h2>
+            <div class="bg-blue-600 text-white p-8 md:w-1/3 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-xl font-bold mb-6">Tahapan Evaluasi</h2>
+                    <ul class="space-y-6 relative">
+                        <div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-blue-400 opacity-50"></div>
+                        
+                        <li id="nav-step-1" class="flex items-center gap-4 relative z-10 transition-opacity">
+                            <div class="w-6 h-6 rounded-full bg-white text-blue-600 font-bold flex items-center justify-center text-sm shadow ring-4 ring-blue-600">1</div>
+                            <span class="font-semibold">Target & Waktu</span>
+                        </li>
+                        <li id="nav-step-2" class="flex items-center gap-4 relative z-10 opacity-50 transition-opacity">
+                            <div class="w-6 h-6 rounded-full bg-blue-400 text-white font-bold flex items-center justify-center text-sm ring-4 ring-blue-600">2</div>
+                            <span class="font-semibold">Kondisi Keuangan</span>
+                        </li>
+                        <li id="nav-step-3" class="flex items-center gap-4 relative z-10 opacity-50 transition-opacity">
+                            <div class="w-6 h-6 rounded-full bg-blue-400 text-white font-bold flex items-center justify-center text-sm ring-4 ring-blue-600">3</div>
+                            <span class="font-semibold">Alokasi & Risiko</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="hidden md:block">
+                    <p class="text-sm text-blue-200">Algoritma perhitungan menggunakan metode Bunga Majemuk (Compound Interest) dan Penyesuaian Inflasi (Future Value).</p>
+                </div>
+            </div>
+
+            <div class="p-8 md:w-2/3" id="form-container">
                 
-                <form id="calcForm" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
+                <div id="step-1" class="step-active space-y-6">
+                    <div>
+                        <h3 class="text-2xl font-bold">Target Waktu Pensiun</h3>
+                        <p class="text-slate-500 text-sm mt-1">Berapa lama waktu yang Anda miliki untuk bersiap?</p>
+                    </div>
+                    <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Usia Saat Ini</label>
-                            <input type="number" id="usiaSekarang" placeholder="Misal: 25" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Usia Anda Saat Ini (Tahun)</label>
+                            <input type="number" id="usiaSekarang" placeholder="Contoh: 25" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Target Pensiun</label>
-                            <input type="number" id="usiaPensiun" placeholder="Misal: 40" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Target Usia Pensiun (Tahun)</label>
+                            <input type="number" id="usiaPensiun" placeholder="Contoh: 40" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
                         </div>
                     </div>
+                    <div class="pt-4 flex justify-end">
+                        <button onclick="nextStep(2)" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition shadow-md">Selanjutnya &rarr;</button>
+                    </div>
+                </div>
 
+                <div id="step-2" class="step-hidden space-y-6">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1">Gaji Saat Ini (Rp/Bulan)</label>
-                        <input type="number" id="gaji" placeholder="Misal: 5000000" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                        <h3 class="text-2xl font-bold">Kondisi Keuangan</h3>
+                        <p class="text-slate-500 text-sm mt-1">Berapa kapasitas menabung Anda setiap bulannya?</p>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1">Pengeluaran (Rp/Bulan)</label>
-                        <input type="number" id="pengeluaran" placeholder="Misal: 3000000" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Gaji / Pemasukan Bulanan (Rp)</label>
+                            <input type="number" id="gaji" placeholder="Contoh: 8000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Pengeluaran Rutin Bulanan (Rp)</label>
+                            <input type="number" id="pengeluaran" placeholder="Contoh: 5000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Total Tabungan / Modal Saat Ini (Rp)</label>
+                            <input type="number" id="tabunganAwal" placeholder="Contoh: 10000000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1">Total Tabungan Saat Ini (Rp)</label>
-                        <input type="number" id="tabunganAwal" placeholder="Misal: 10000000" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    <div class="pt-4 flex justify-between">
+                        <button onclick="prevStep(1)" class="text-slate-500 hover:text-slate-800 px-4 py-3 font-semibold transition">&larr; Kembali</button>
+                        <button onclick="nextStep(3)" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition shadow-md">Selanjutnya &rarr;</button>
                     </div>
+                </div>
 
-                    <div class="pt-2 border-t mt-4">
-                        <h3 class="text-xs font-bold text-slate-800 mb-3 uppercase">Alokasi & Asumsi</h3>
-                        <div class="space-y-3">
+                <div id="step-3" class="step-hidden space-y-6">
+                    <div>
+                        <h3 class="text-2xl font-bold">Strategi Alokasi & Risiko</h3>
+                        <p class="text-slate-500 text-sm mt-1">Tentukan bagaimana sisa uang Anda diputar dalam investasi.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-500 mb-1">Asumsi Inflasi (CPI) % / Thn</label>
-                                <input type="number" step="0.1" id="inflasi" placeholder="Misal: 2.5" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-[10px] font-semibold text-slate-500 mb-1">Alokasi Investasi Awal (%)</label>
-                                    <input type="number" id="alokasiInvAwal" placeholder="Misal: 50" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-semibold text-slate-500 mb-1">Alokasi Inv. Bulanan (%)</label>
-                                    <input type="number" id="alokasiInvBulan" placeholder="Misal: 80" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                                </div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Asumsi Inflasi (%)</label>
+                                <input type="number" step="0.1" id="inflasi" value="2.5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-500 mb-1">Profil Risiko Investasi</label>
-                                <select id="profilRisiko" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                                    <option value="" disabled selected>Pilih Profil...</option>
-                                    <option value="0.05">Konservatif (Return ~5%)</option>
-                                    <option value="0.083">Moderat (Return ~8.3%)</option>
-                                    <option value="0.12">Agresif (Return ~12%)</option>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Profil Risiko Investasi</label>
+                                <select id="profilRisiko" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
+                                    <option value="0.05">Konservatif (~5%/thn)</option>
+                                    <option value="0.083" selected>Moderat (~8.3%/thn)</option>
+                                    <option value="0.12">Agresif (~12%/thn)</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="lg:col-span-8 flex flex-col gap-6 opacity-50 transition-opacity duration-300" id="dashboardPanel">
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <p class="text-[10px] uppercase font-bold text-slate-400">Masa Persiapan</p>
-                        <h4 class="text-xl font-bold text-slate-700 mt-1" id="resMasaPersiapan">- Thn</h4>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <p class="text-[10px] uppercase font-bold text-slate-400">Durasi Pensiun</p>
-                        <h4 class="text-xl font-bold text-slate-700 mt-1" id="resDurasiPensiun">- Thn</h4>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <p class="text-[10px] uppercase font-bold text-slate-400">Investasi Bulanan</p>
-                        <h4 class="text-lg font-bold text-blue-600 mt-1" id="resInvBulanan">Rp 0</h4>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <p class="text-[10px] uppercase font-bold text-slate-400">Tabungan Bulanan</p>
-                        <h4 class="text-lg font-bold text-slate-600 mt-1" id="resTabBulanan">Rp 0</h4>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-700 mb-4">Target vs Ketersediaan Dana Pensiun</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                            <p class="text-xs font-semibold text-slate-500 mb-1">Total Dana Pensiun Dibutuhkan</p>
-                            <h3 class="text-2xl font-bold text-slate-800" id="resKebutuhan">Rp 0</h3>
-                            <p class="text-xs text-slate-400 mt-2 flex justify-between">
-                                <span>Biaya Hidup Pensiun (Bln)</span>
-                                <span class="font-semibold text-slate-600" id="resBiayaHidup">Rp 0</span>
-                            </p>
-                        </div>
-                        
-                        <div class="bg-blue-50 p-5 rounded-xl border border-blue-100">
-                            <p class="text-xs font-semibold text-blue-600 mb-1">Proyeksi Dana Terkumpul</p>
-                            <h3 class="text-2xl font-bold text-blue-700" id="resTerkumpul">Rp 0</h3>
-                            <p class="text-xs text-blue-500 mt-2 flex justify-between">
-                                <span>Total Investasi & Tabungan Akhir</span>
-                            </p>
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                            <label class="block text-sm font-semibold text-blue-800 mb-2">Persentase Uang yang Masuk ke Investasi</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-xs text-blue-600 block mb-1">Dari Tabungan Awal (%)</span>
+                                    <input type="number" id="alokInvAwal" value="50" class="w-full px-3 py-2 bg-white border border-blue-200 rounded-lg outline-none text-sm">
+                                </div>
+                                <div>
+                                    <span class="text-xs text-blue-600 block mb-1">Dari Sisa Gaji Bulanan (%)</span>
+                                    <input type="number" id="alokInvBln" value="80" class="w-full px-3 py-2 bg-white border border-blue-200 rounded-lg outline-none text-sm">
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-blue-500 mt-2">*Sisa dari persentase di atas akan otomatis masuk ke keranjang tabungan tunai (bunga 0%).</p>
                         </div>
                     </div>
-
-                    <div class="mt-6 p-4 rounded-lg text-center" id="statusBox">
-                        <p class="text-sm font-semibold" id="statusText">Isi form di sebelah kiri untuk melihat hasil proyeksi Anda.</p>
-                        <p class="text-xs mt-1" id="rekomendasiText"></p>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex-grow relative">
-                    <h2 class="text-sm font-bold text-slate-700 mb-4">Grafik Proyeksi Pertumbuhan Dana</h2>
-                    <div class="h-64 w-full">
-                        <canvas id="growthChart"></canvas>
+                    <div class="pt-4 flex justify-between">
+                        <button onclick="prevStep(2)" class="text-slate-500 hover:text-slate-800 px-4 py-3 font-semibold transition">&larr; Kembali</button>
+                        <button onclick="generateDashboard()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition shadow-md shadow-emerald-200">Lihat Hasil Proyeksi!</button>
                     </div>
                 </div>
 
             </div>
         </div>
+
+        <div id="dashboard" class="mt-8 hidden animate-[fadeIn_0.6s_ease-in-out]">
+            <div class="text-center mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <h2 class="text-3xl font-bold text-slate-800">Dashboard Proyeksi Anda</h2>
+                <button onclick="editData()" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-lg font-semibold hover:bg-slate-50 text-sm shadow-sm">Edit Data</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wide mb-4">Target Finansial</h4>
+                        <div>
+                            <p class="text-xs text-slate-500">Biaya Hidup Bulanan (Disesuaikan Inflasi)</p>
+                            <h3 class="text-xl font-bold text-slate-800" id="resBiayaHidup">Rp 0</h3>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100">
+                            <p class="text-xs text-slate-500">Total Dana Pensiun Dibutuhkan</p>
+                            <h3 class="text-2xl font-bold text-slate-800" id="resKebutuhan">Rp 0</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-600 p-6 rounded-2xl shadow-lg text-white relative overflow-hidden">
+                        <div class="absolute -right-10 -top-10 w-32 h-32 bg-white opacity-10 rounded-full"></div>
+                        <h4 class="text-sm font-bold text-blue-200 uppercase tracking-wide mb-4 relative z-10">Proyeksi Aset</h4>
+                        <div class="relative z-10">
+                            <p class="text-xs text-blue-100">Estimasi Uang Terkumpul</p>
+                            <h3 class="text-3xl font-bold text-white" id="resTerkumpul">Rp 0</h3>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-blue-500 flex justify-between items-center relative z-10">
+                            <div>
+                                <p class="text-xs text-blue-200">Setoran Rutin</p>
+                                <p class="text-sm font-semibold" id="resSetoranBln">Rp 0 / bln</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-blue-200">Sisa Waktu</p>
+                                <p class="text-sm font-semibold" id="resMasa">0 Tahun</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+                    <div id="alertBox" class="p-5 rounded-2xl border flex gap-4 items-start">
+                        <div class="text-3xl" id="alertIcon">⚠️</div>
+                        <div>
+                            <h4 class="font-bold text-lg" id="alertTitle">Terdapat Kekurangan Dana</h4>
+                            <p class="text-sm mt-1" id="alertDesc">Anda masih kekurangan dana untuk mencapai target pensiun.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-slate-700 mb-4">Grafik Pertumbuhan Aset</h3>
+                        <div class="h-64">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
         let myChart = null;
+
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
 
-        function calculate() {
-            // 1. Ambil Nilai (Ubah string kosong jadi 0 / NaN)
-            const usia = parseInt(document.getElementById('usiaSekarang').value);
-            const pensiun = parseInt(document.getElementById('usiaPensiun').value);
-            const gaji = parseFloat(document.getElementById('gaji').value);
-            const pengeluaran = parseFloat(document.getElementById('pengeluaran').value);
-            const tabunganAwal = parseFloat(document.getElementById('tabunganAwal').value);
-            const inflasi = parseFloat(document.getElementById('inflasi').value) / 100;
-            const alokInvAwal = parseFloat(document.getElementById('alokasiInvAwal').value) / 100;
-            const alokInvBln = parseFloat(document.getElementById('alokasiInvBulan').value) / 100;
-            const returnInv = parseFloat(document.getElementById('profilRisiko').value);
-
-            // Validasi: Jika input krusial masih kosong, jangan proses
-            if (!usia || !pensiun || !gaji || !pengeluaran || isNaN(inflasi) || isNaN(returnInv)) {
-                document.getElementById('dashboardPanel').classList.add('opacity-50', 'pointer-events-none');
-                return;
-            } else {
-                document.getElementById('dashboardPanel').classList.remove('opacity-50', 'pointer-events-none');
+        // Navigasi UI
+        function updateNav(step) {
+            for(let i=1; i<=3; i++) {
+                const nav = document.getElementById('nav-step-'+i);
+                const circle = nav.querySelector('div');
+                if(i < step) {
+                    nav.classList.remove('opacity-50');
+                    circle.className = "w-6 h-6 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm ring-4 ring-blue-600 shadow";
+                } else if(i === step) {
+                    nav.classList.remove('opacity-50');
+                    circle.className = "w-6 h-6 rounded-full bg-white text-blue-600 font-bold flex items-center justify-center text-sm shadow ring-4 ring-blue-600";
+                } else {
+                    nav.classList.add('opacity-50');
+                    circle.className = "w-6 h-6 rounded-full bg-blue-400 text-white font-bold flex items-center justify-center text-sm ring-4 ring-blue-600";
+                }
             }
+        }
 
-            // 2. Kalkulasi Durasi & Sisa Gaji
-            const masaPersiapan = pensiun - usia;
-            const angkaHarapanHidup = 75; // Sesuai sheet
-            const durasiPensiun = angkaHarapanHidup - pensiun;
-            const sisaGaji = gaji - pengeluaran;
+        function nextStep(step) {
+            document.getElementById('step-' + (step-1)).classList.replace('step-active', 'step-hidden');
+            document.getElementById('step-' + step).classList.replace('step-hidden', 'step-active');
+            updateNav(step);
+        }
 
-            if (masaPersiapan <= 0) return;
+        function prevStep(step) {
+            document.getElementById('step-' + (step+1)).classList.replace('step-active', 'step-hidden');
+            document.getElementById('step-' + step).classList.replace('step-hidden', 'step-active');
+            updateNav(step);
+        }
 
-            // 3. Kalkulasi Alokasi 
-            const invAwal = (tabunganAwal || 0) * alokInvAwal;
-            const sisaTabAwal = (tabunganAwal || 0) - invAwal;
+        function editData() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('form-container').parentElement.classList.remove('hidden');
+            prevStep(3); // Kembali ke form terakhir
+        }
+
+        // Engine Perhitungan Utama
+        function generateDashboard() {
+            const usia = parseInt(document.getElementById('usiaSekarang').value) || 0;
+            const pensiun = parseInt(document.getElementById('usiaPensiun').value) || 0;
+            const gaji = parseFloat(document.getElementById('gaji').value) || 0;
+            const pengeluaran = parseFloat(document.getElementById('pengeluaran').value) || 0;
+            const tabAwalRaw = parseFloat(document.getElementById('tabunganAwal').value) || 0;
             
-            const invBulanan = sisaGaji * alokInvBln;
-            const tabBulanan = sisaGaji - invBulanan;
+            const inflasi = parseFloat(document.getElementById('inflasi').value) / 100 || 0.025;
+            const alokInvAwal = parseFloat(document.getElementById('alokInvAwal').value) / 100 || 0.5;
+            const alokInvBln = parseFloat(document.getElementById('alokInvBln').value) / 100 || 0.8;
+            const returnInv = parseFloat(document.getElementById('profilRisiko').value) || 0.083;
 
-            // 4. Kalkulasi Target (Future Value dr Inflasi)
+            // Validasi Sederhana
+            if(pensiun <= usia) return alert("Target pensiun harus lebih besar dari usia saat ini!");
+            if(gaji <= pengeluaran) return alert("Gaji harus lebih besar dari pengeluaran agar bisa menabung!");
+
+            // Rumus Tahap 1: Waktu & Kebutuhan
+            const masaPersiapan = pensiun - usia;
+            const angkaHarapanHidup = 75; 
+            const durasiPensiun = angkaHarapanHidup - pensiun;
+
             const biayaHidupPensiunBln = pengeluaran * Math.pow(1 + inflasi, masaPersiapan);
             const danaPensiunDibutuhkan = biayaHidupPensiunBln * 12 * durasiPensiun;
 
-            // 5. Kalkulasi Proyeksi (Future Value of Investment)
-            let chartLabels = [];
-            let chartDataInv = [];
-            let chartDataTarget = [];
+            // Rumus Tahap 2: Alokasi Kemampuan
+            const sisaGaji = gaji - pengeluaran;
+            const invBulanan = sisaGaji * alokInvBln;
+            const tabBulanan = sisaGaji - invBulanan;
+            
+            const invAwal = tabAwalRaw * alokInvAwal;
+            const sisaTabAwal = tabAwalRaw - invAwal;
+
+            // Rumus Tahap 3: Proyeksi (Bunga Majemuk)
+            let arrLabel = [];
+            let arrData = [];
+            let arrTarget = [];
+            
             let saldoInvTahun = invAwal;
             let saldoTabTahun = sisaTabAwal;
 
             for (let i = 0; i <= masaPersiapan; i++) {
-                chartLabels.push("Usia " + (usia + i));
-                chartDataInv.push(saldoInvTahun + saldoTabTahun);
-                chartDataTarget.push(danaPensiunDibutuhkan);
+                arrLabel.push(usia + i);
+                arrData.push(saldoInvTahun + saldoTabTahun);
+                arrTarget.push(danaPensiunDibutuhkan);
 
-                // Tambah bunga dan setoran di akhir tahun
-                saldoInvTahun = (saldoInvTahun * (1 + returnInv)) + (invBulanan * 12 * ((Math.pow(1 + returnInv, 1) - 1) / returnInv));
+                // Asumsi setoran investasi bulanan diproses setahun penuh (Rumus FV Annuity)
+                const pertumbuhanInv = (saldoInvTahun * returnInv) + (invBulanan * 12 * ((Math.pow(1 + returnInv, 1) - 1) / returnInv));
+                saldoInvTahun += pertumbuhanInv + (invBulanan * 12);
+                
+                // Tabungan cash murni tanpa bunga
                 saldoTabTahun += (tabBulanan * 12);
             }
 
-            // Nilai Akhir
-            const totalTabunganAkhir = sisaTabAwal + (tabBulanan * 12 * masaPersiapan);
-            const totalInvestasiAkhir = chartDataInv[chartDataInv.length - 1] - totalTabunganAkhir;
-            const danaTerkumpul = chartDataInv[chartDataInv.length - 1];
-            const kekurangan = danaPensiunDibutuhkan - danaTerkumpul;
+            const danaTerkumpul = arrData[arrData.length - 1];
+            const selisih = danaPensiunDibutuhkan - danaTerkumpul;
 
-            // 6. Rekomendasi (Rumus PMT)
-            let rekTmbInvBln = 0;
-            if (kekurangan > 0) {
-                // Berapa setoran bulanan yang butuh ditambah utk menutupi kekurangan?
-                rekTmbInvBln = (kekurangan / ((Math.pow(1 + returnInv, masaPersiapan) - 1) / returnInv)) / 12;
-            }
+            // Transisi UI
+            document.getElementById('form-container').parentElement.classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
 
-            // 7. Update UI
-            document.getElementById('resMasaPersiapan').innerText = masaPersiapan + " Thn";
-            document.getElementById('resDurasiPensiun').innerText = durasiPensiun + " Thn";
-            document.getElementById('resInvBulanan').innerText = formatRp(invBulanan);
-            document.getElementById('resTabBulanan').innerText = formatRp(tabBulanan);
-
-            document.getElementById('resKebutuhan').innerText = formatRp(danaPensiunDibutuhkan);
+            // Render Angka ke UI
             document.getElementById('resBiayaHidup').innerText = formatRp(biayaHidupPensiunBln);
+            document.getElementById('resKebutuhan').innerText = formatRp(danaPensiunDibutuhkan);
             document.getElementById('resTerkumpul').innerText = formatRp(danaTerkumpul);
+            document.getElementById('resSetoranBln').innerText = formatRp(invBulanan + tabBulanan) + " / bln";
+            document.getElementById('resMasa').innerText = masaPersiapan + " Thn";
 
-            const statusBox = document.getElementById('statusBox');
-            const statusText = document.getElementById('statusText');
-            const rekomendasiText = document.getElementById('rekomendasiText');
+            // Evaluasi & Rekomendasi
+            const box = document.getElementById('alertBox');
+            const icon = document.getElementById('alertIcon');
+            const title = document.getElementById('alertTitle');
+            const desc = document.getElementById('alertDesc');
 
-            if (kekurangan > 0) {
-                statusBox.className = "mt-6 p-4 rounded-xl bg-red-50 border border-red-100 text-center";
-                statusText.className = "text-sm font-bold text-red-600";
-                statusText.innerText = "⚠️ Terdapat Kekurangan Dana: " + formatRp(kekurangan);
+            if (selisih > 0) {
+                // Rumus PMT untuk mencari kebutuhan tambahan investasi per bulan
+                const tambahTahunan = selisih / ((Math.pow(1 + returnInv, masaPersiapan) - 1) / returnInv);
+                const tambahBulanan = tambahTahunan / 12;
+
+                box.className = "p-5 rounded-2xl border flex gap-4 items-start bg-red-50 border-red-200 text-red-800";
+                icon.innerText = "⚠️";
+                title.innerText = "Terdapat Kekurangan Dana: " + formatRp(selisih);
                 
-                rekomendasiText.className = "text-xs text-red-500 mt-2";
+                let solusiHtml = `Untuk mencapai target pensiun, Anda perlu menambah alokasi tabungan/investasi sebesar <b>${formatRp(tambahBulanan)} / bulan</b> dari pendapatan Anda saat ini. `;
                 if(returnInv < 0.12) {
-                    rekomendasiText.innerHTML = `Solusi: Anda dapat menambah investasi sebesar <b class="text-red-700">${formatRp(rekTmbInvBln)}</b>/bulan <b>ATAU</b> tingkatkan Profil Risiko ke AGRESIF (Saham/Kripto).`;
-                } else {
-                    rekomendasiText.innerHTML = `Solusi: Anda perlu menaikkan pendapatan untuk menambah investasi sebesar <b class="text-red-700">${formatRp(rekTmbInvBln)}</b>/bulan.`;
+                    solusiHtml += `<br><span class="text-xs opacity-80 mt-2 block">💡 Alternatif: Tingkatkan Profil Risiko Anda ke Agresif (misal: Saham) untuk potensi imbal hasil yang lebih tinggi.</span>`;
                 }
+                desc.innerHTML = solusiHtml;
             } else {
-                statusBox.className = "mt-6 p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-center";
-                statusText.className = "text-sm font-bold text-emerald-600";
-                statusText.innerText = "✅ Selamat! Proyeksi Dana Anda Surplus: " + formatRp(Math.abs(kekurangan));
-                rekomendasiText.innerHTML = "Pertahankan kedisiplinan alokasi investasi bulanan Anda.";
-                rekomendasiText.className = "text-xs text-emerald-500 mt-2";
+                box.className = "p-5 rounded-2xl border flex gap-4 items-start bg-emerald-50 border-emerald-200 text-emerald-800";
+                icon.innerText = "🎉";
+                title.innerText = "Surplus Dana: " + formatRp(Math.abs(selisih));
+                desc.innerHTML = "Luar biasa! Jika Anda konsisten dengan skema ini, dana pensiun Anda diproyeksikan akan tercapai bahkan berlebih.";
             }
 
-            renderChart(chartLabels, chartDataInv, chartDataTarget);
+            renderChart(arrLabel, arrData, arrTarget);
         }
 
-        function renderChart(labels, asetData, targetData) {
+        // Render Grafik
+        function renderChart(labels, dataTerkumpul, target) {
             const ctx = document.getElementById('growthChart').getContext('2d');
             if (myChart) myChart.destroy();
 
             myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: labels.map(l => 'Usia ' + l),
                     datasets: [
                         {
-                            label: 'Proyeksi Terkumpul (Rp)',
-                            data: asetData,
-                            borderColor: '#2563eb',
+                            label: 'Proyeksi Aset Terkumpul (Rp)',
+                            data: dataTerkumpul,
+                            borderColor: '#2563eb', // Blue 600
                             backgroundColor: 'rgba(37, 99, 235, 0.1)',
                             borderWidth: 3,
                             fill: true,
                             tension: 0.4
                         },
                         {
-                            label: 'Target Dana (Rp)',
-                            data: targetData,
-                            borderColor: '#94a3b8',
+                            label: 'Target Dana Dibutuhkan (Rp)',
+                            data: target,
+                            borderColor: '#94a3b8', // Slate 400
                             borderWidth: 2,
-                            borderDash: [5, 5],
+                            borderDash: [6, 4],
                             fill: false,
                             pointRadius: 0
                         }
@@ -289,20 +380,14 @@
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
                         tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': ' + formatRp(ctx.raw) } },
-                        legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true } }
+                        legend: { position: 'top', align: 'end', labels: { boxWidth: 12, usePointStyle: true } }
                     },
                     scales: {
-                        y: { ticks: { callback: (value) => value >= 1e9 ? 'Rp ' + (value/1e9).toFixed(1) + ' M' : (value >= 1e6 ? 'Rp ' + (value/1e6).toFixed(0) + ' Jt' : value) } }
+                        y: { ticks: { callback: (val) => val >= 1e9 ? 'Rp ' + (val/1e9).toFixed(1) + ' M' : (val >= 1e6 ? 'Rp ' + (val/1e6).toFixed(0) + ' Jt' : val) } }
                     }
                 }
             });
         }
-
-        // Attach event listeners ke semua input
-        document.querySelectorAll('input, select').forEach(el => {
-            el.addEventListener('input', calculate);
-        });
-
     </script>
 </body>
 </html>
